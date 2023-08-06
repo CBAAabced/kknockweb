@@ -28,8 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //파일 검사
         if (isset($_FILES['b_file']) && $_FILES['b_file']['error'] === UPLOAD_ERR_OK) {
             $tmpfile =  $_FILES['b_file']['tmp_name'];
-            //$o_name = $_FILES['b_file']['name'];
-            $filename = time().'-'.rand(1000,9999).'.'.pathinfo($_FILES['b_file']['name'], PATHINFO_EXTENSION);
+            $ext = pathinfo($_FILES['b_file']['name'], PATHINFO_EXTENSION);
+            $filename = time().'-'.rand(1000,9999).'.'.$ext;
+            $allowed_ext = array('jpg', 'jpeg', 'png', 'txt');
+            if (!in_array($ext, $allowed_ext)) {
+                echo "<script type='text/javascript'>alert('이미지와 텍스트 파일만 업로드 가능합니다!');</script>";
+                echo "<meta http-equiv='refresh' content='0; url=list.php' />";
+                exit();
+            }
+
             $folder = "./upload/".$filename;
             move_uploaded_file($tmpfile,$folder);
         }
